@@ -1,0 +1,22 @@
+name: Auto-merge Exercism Solutions
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    # Triggers only if the PR author is the syncer bot or user
+    if: github.actor == 'exercism-solutions-syncer[bot]'
+    steps:
+      - name: Auto-merge PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        # Uses the GitHub CLI to squash and merge automatically
+        run: gh pr merge --auto --squash "$PR_URL"
